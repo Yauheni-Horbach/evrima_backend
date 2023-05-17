@@ -20,7 +20,7 @@ export class AuthService {
     email,
     password,
   }: SignUpDto): Promise<{ token: string }> {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 6);
 
     const user = await this.userModel.create({
       name,
