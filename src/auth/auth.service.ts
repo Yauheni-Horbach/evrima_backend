@@ -1,11 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User } from '../common/schemas/user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdatePasswordDto } from './dto/updatePassword.dto';
+import { UpdateEmailDto } from './dto/updateEmail.dto';
+
+export type RequestResult = Promise<{ token: string; id: string }>;
 
 @Injectable()
 export class AuthService {
@@ -15,11 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp({
-    name,
-    email,
-    password,
-  }: SignUpDto): Promise<{ token: string }> {
+  async signUp({ name, email, password }: SignUpDto): RequestResult {
     const hashedPassword = await bcrypt.hash(password, 6);
 
     const user = await this.userModel.create({
@@ -30,10 +30,10 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token };
+    return { token, id: user._id.toString() };
   }
 
-  async login({ email, password }: LoginDto): Promise<{ token: string }> {
+  async login({ email, password }: LoginDto): RequestResult {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
@@ -48,6 +48,54 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token };
+    return { token, id: user._id.toString() };
+  }
+
+  async updatePassword({
+    password,
+    newPassword,
+    email,
+  }: UpdatePasswordDto): RequestResult {
+    const user = await this.userModel.findOne({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Current password is invalid');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 6);
+
+    this.userModel.findByIdAndUpdate(
+      user._id,
+      { password: hashedPassword },
+      { new: true },
+    );
+
+    const token = this.jwtService.sign({ id: user._id });
+
+    return { token, id: user._id.toString() };
+  }
+
+  async updateEmail({ email, newEmail }: UpdateEmailDto): RequestResult {
+    const user = await this.userModel.findOne({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    this.userModel.findByIdAndUpdate(
+      user._id,
+      { email: newEmail },
+      { new: true },
+    );
+
+    const token = this.jwtService.sign({ id: user._id });
+
+    return { token, id: user._id.toString() };
   }
 }

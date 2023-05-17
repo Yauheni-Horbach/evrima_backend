@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Controller, Post, Body } from '@nestjs/common';
+import { AuthService, RequestResult } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdatePasswordDto } from './dto/updatePassword.dto';
+import { UpdateEmailDto } from './dto/updateEmail.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,7 +13,7 @@ export class AuthController {
   async signUp(
     @Body()
     signUpDto: SignUpDto,
-  ): Promise<{ token: string }> {
+  ): RequestResult {
     return this.authService.signUp(signUpDto);
   }
 
@@ -19,7 +21,23 @@ export class AuthController {
   async login(
     @Body()
     loginDto: LoginDto,
-  ): Promise<{ token: string }> {
+  ): RequestResult {
     return this.authService.login(loginDto);
+  }
+
+  @Post('/update-password')
+  async updatePassword(
+    @Body()
+    updatePasswordDto: UpdatePasswordDto,
+  ): RequestResult {
+    return this.authService.updatePassword(updatePasswordDto);
+  }
+
+  @Post('/update-email')
+  async updateEmail(
+    @Body()
+    updateEmailDto: UpdateEmailDto,
+  ): RequestResult {
+    return this.authService.updateEmail(updateEmailDto);
   }
 }
