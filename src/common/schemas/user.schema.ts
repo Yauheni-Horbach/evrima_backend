@@ -8,6 +8,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
     transform(_, ret) {
       ret.id = ret._id;
       delete ret._id;
+      delete ret.__v;
     },
   },
 })
