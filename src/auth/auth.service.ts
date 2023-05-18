@@ -6,10 +6,12 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { UserDto } from '../common/dto/user.dto';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 
 export type RequestResult = Promise<{ token: string; id: string }>;
+export type UserRequestResult = Promise<{ user: UserDto; token: string }>;
 
 @Injectable()
 export class AuthService {
@@ -19,7 +21,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp({ name, email, password }: SignUpDto): RequestResult {
+  async signUp({ name, email, password }: SignUpDto): UserRequestResult {
     const hashedPassword = await bcrypt.hash(password, 6);
 
     const user = await this.userModel.create({
@@ -30,10 +32,10 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token, id: user._id.toString() };
+    return { token, user };
   }
 
-  async login({ email, password }: LoginDto): RequestResult {
+  async login({ email, password }: LoginDto): UserRequestResult {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
@@ -48,7 +50,7 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token, id: user._id.toString() };
+    return { token, user };
   }
 
   async updatePassword({
