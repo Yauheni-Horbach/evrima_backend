@@ -2,6 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({
   timestamps: true,
+  toJSON: {
+    transform(_, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+    },
+  },
 })
 export class User {
   @Prop()

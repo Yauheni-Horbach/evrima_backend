@@ -11,7 +11,10 @@ import { UpdatePasswordDto } from './dto/updatePassword.dto';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 
 export type RequestResult = Promise<{ token: string; id: string }>;
-export type UserRequestResult = Promise<{ user: UserDto; token: string }>;
+export type UserRequestResult = Promise<{
+  user: Omit<UserDto, 'password'>;
+  token: string;
+}>;
 
 @Injectable()
 export class AuthService {
@@ -32,7 +35,9 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token, user };
+    const { password: userPassword, ...userWithoutPassword } = user.toObject();
+
+    return { token, user: { ...userWithoutPassword } };
   }
 
   async login({ email, password }: LoginDto): UserRequestResult {
@@ -50,7 +55,13 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token, user };
+    const {
+      password: userPassword,
+      _id: id,
+      ...userWithoutPassword
+    } = user.toObject();
+
+    return { token, user: { ...userWithoutPassword } };
   }
 
   async updatePassword({
