@@ -35,7 +35,7 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    const { password: userPassword, ...userWithoutPassword } = user.toObject();
+    const { password: userPassword, ...userWithoutPassword } = user.toJSON();
 
     return { token, user: { ...userWithoutPassword } };
   }
@@ -55,7 +55,7 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    const { password: userPassword, ...userWithoutPassword } = user.toObject();
+    const { password: userPassword, ...userWithoutPassword } = user.toJSON();
 
     return { token, user: { ...userWithoutPassword } };
   }
