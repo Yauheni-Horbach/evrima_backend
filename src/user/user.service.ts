@@ -28,13 +28,21 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    const { password, ...result } = user.toJSON();
+
+    return result;
   }
 
   async updateUserProfile(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+    const user = await this.userModel.findByIdAndUpdate(id, updateUserDto, {
+      new: true,
+    });
+
+    const { password, ...result } = user.toJSON();
+
+    return result;
   }
 }

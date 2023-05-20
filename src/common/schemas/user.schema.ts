@@ -13,13 +13,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
   },
 })
 export class User {
-  @Prop({ required: true })
+  @Prop()
   name: string;
 
   @Prop({ unique: [true, 'Email already exists'] })
   email: string;
 
-  @Prop({ required: true })
+  @Prop()
   password: string;
 
   @Prop({ default: '' })
