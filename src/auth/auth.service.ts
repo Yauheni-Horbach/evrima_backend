@@ -54,9 +54,9 @@ export class AuthService {
   async updatePassword({
     password,
     newPassword,
-    email,
+    id,
   }: UpdatePasswordDto): RequestResult {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findById(id);
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -81,8 +81,8 @@ export class AuthService {
     return { token, id: user._id.toString() };
   }
 
-  async updateEmail({ email, newEmail }: UpdateEmailDto): RequestResult {
-    const user = await this.userModel.findOne({ email });
+  async updateEmail({ id, newEmail }: UpdateEmailDto): RequestResult {
+    const user = await this.userModel.findById(id);
 
     if (!user) {
       throw new UnauthorizedException('User not found');

@@ -2,8 +2,7 @@ import { IsNotEmpty, IsEmail } from 'class-validator';
 
 export class UpdateEmailDto {
   @IsNotEmpty()
-  @IsEmail({}, { message: 'Invalid email' })
-  readonly email: string;
+  readonly id: string;
 
   @IsNotEmpty()
   @IsEmail({}, { message: 'Invalid email' })

@@ -11,7 +11,5 @@ export class UpdatePasswordDto {
   @MinLength(10, { message: 'Password must be at least 10 characters' })
   readonly newPassword: string;
 
-  @IsNotEmpty()
-  @IsEmail({}, { message: 'Invalid email' })
-  readonly email: string;
+  readonly id: string;
 }
