@@ -11,6 +11,12 @@ import { UpdateEmailDto } from './dto/updateEmail.dto';
 
 export type RequestResult = Promise<{ token: string; id: string }>;
 
+export type RequestResultWithNewEmail = Promise<{
+  token: string;
+  id: string;
+  email: string;
+}>;
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -81,7 +87,10 @@ export class AuthService {
     return { token, id: user._id.toString() };
   }
 
-  async updateEmail({ id, newEmail }: UpdateEmailDto): RequestResult {
+  async updateEmail({
+    id,
+    newEmail,
+  }: UpdateEmailDto): RequestResultWithNewEmail {
     const user = await this.userModel.findById(id);
 
     if (!user) {
@@ -96,6 +105,6 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
 
-    return { token, id: user._id.toString() };
+    return { token, id: user._id.toString(), email: newEmail };
   }
 }
