@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsOptional,
 } from 'class-validator';
+import { TravelItem } from '../../types';
 
 export class UserDto {
   @IsString()
@@ -36,4 +37,9 @@ export class UserDto {
 
   @IsOptional()
   currentTravelId: string;
+
+  @IsOptional()
+  travelList: {
+    [key: string]: TravelItem;
+  };
 }
