@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsArray, IsEmail } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsArray,
+  IsEmail,
+  IsOptional,
+} from 'class-validator';
 
 export class UserDto {
   @IsString()
@@ -27,4 +33,7 @@ export class UserDto {
 
   @IsString()
   avatar: string;
+
+  @IsOptional()
+  currentTravelId: string;
 }

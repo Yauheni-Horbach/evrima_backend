@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { TravelItem } from '../../types';
 
 @Schema({
   timestamps: true,
@@ -42,6 +43,14 @@ export class User {
 
   @Prop({ default: '' })
   avatar: string;
+
+  @Prop({ default: '' })
+  readonly currentTravelId: string;
+
+  @Prop({ default: {} })
+  readonly travelList: {
+    [key: string]: TravelItem;
+  };
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

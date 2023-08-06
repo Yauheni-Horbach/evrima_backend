@@ -1,7 +1,15 @@
-import { Controller, Get, Param, Body, Put } from '@nestjs/common';
+import { Controller, Get, Param, Body, Put, Query } from '@nestjs/common';
 
 import { UserDto } from '../common/dto/user.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import {
+  CreateTravelDto,
+  CreateTravelDtoResult,
+} from './dto/createTravelItem.dto';
+import {
+  UpdateTravelItemDto,
+  UpdateTravelItemDtoResult,
+} from './dto/updateTravelItem.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -22,5 +30,29 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
     return this.userService.updateUserProfile(id, updateUserDto);
+  }
+
+  @Put('/createTravel/:id')
+  async createTravel(
+    @Param('id') id: string,
+    @Body() createTravelDto: CreateTravelDto,
+  ): Promise<CreateTravelDtoResult> {
+    return this.userService.createTravel(id, createTravelDto);
+  }
+
+  @Get('/getTravelItem/:id')
+  async getTravelItem(
+    @Param('id') id: string,
+    @Query() params: { travelId: string },
+  ): Promise<CreateTravelDtoResult> {
+    return this.userService.getTravelItem(id, params);
+  }
+
+  @Put('/updateTravelItem/:id')
+  async updateTravelItem(
+    @Param('id') id: string,
+    @Body() updateTravelItemDto: UpdateTravelItemDto,
+  ): Promise<UpdateTravelItemDtoResult> {
+    return this.userService.updateTravelItem(id, updateTravelItemDto);
   }
 }
