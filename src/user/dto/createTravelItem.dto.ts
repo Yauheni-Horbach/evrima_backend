@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
 } from 'class-validator';
-import { TravelItem } from '../../types';
 
 export class CreateTravelDto {
   @IsString()
@@ -39,5 +38,5 @@ export class CreateTravelDtoResult {
   @IsString()
   readonly currentTravelId: string;
 
-  readonly travelItem: TravelItem;
+  readonly travelItem: CreateTravelDto;
 }

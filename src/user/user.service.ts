@@ -67,23 +67,17 @@ export class UserService {
 
     const travelId = v4() as string;
 
-    this.userModel.findByIdAndUpdate(
-      user._id,
-      {
-        currentTravelId: travelId as string,
-        travelList: {
-          ...user.travelList,
-          [travelId]: createTravelDto,
-        },
+    this.userModel.findByIdAndUpdate(user._id, {
+      currentTravelId: travelId,
+      travelList: {
+        ...user.travelList,
+        [travelId]: createTravelDto,
       },
-      { new: true },
-    );
-
-    const { currentTravelId, travelList } = user.toJSON();
+    });
 
     return {
-      currentTravelId,
-      travelItem: travelList[travelId],
+      currentTravelId: travelId,
+      travelItem: createTravelDto,
     };
   }
 
