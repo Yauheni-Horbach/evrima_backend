@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsArray,
-  IsEmail,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, IsEmail } from 'class-validator';
 import { TravelItem } from '../../types';
 
 export class UserDto {
@@ -35,10 +29,10 @@ export class UserDto {
   @IsString()
   avatar: string;
 
-  @IsOptional()
+  @IsString()
   currentTravelId: string;
 
-  @IsOptional()
+  @IsString()
   travelList: {
     [key: string]: TravelItem;
   };
