@@ -67,13 +67,17 @@ export class UserService {
 
     const travelId = v4() as string;
 
-    const userAfterUpdating = await this.userModel.findByIdAndUpdate(id, {
-      currentTravelId: travelId,
-      travelList: {
-        ...user.travelList,
-        [travelId]: createTravelDto,
+    const userAfterUpdating = await this.userModel.findByIdAndUpdate(
+      id,
+      {
+        currentTravelId: travelId,
+        travelList: {
+          ...user.travelList,
+          [travelId]: createTravelDto,
+        },
       },
-    });
+      { new: true },
+    );
 
     return {
       currentTravelId: userAfterUpdating.currentTravelId,
