@@ -11,8 +11,10 @@ import {
   UpdateTravelItemDto,
   UpdateTravelItemDtoResult,
 } from './dto/updateTravelItem.dto';
+import { EstimatePlaceDto } from './dto/estimatePlace.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../common/schemas/user.schema';
+import { PlaceItem } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -150,5 +152,56 @@ export class UserService {
       currentTravelId: updateTravelItem.id,
       travelItem: travelList[updateTravelItem.id],
     };
+  }
+
+  async estimatePlace(
+    @Param('id') id: string,
+    @Body() estimatePlaceDto: EstimatePlaceDto,
+  ): Promise<EstimatePlaceDto> {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { travelList } = user.toJSON();
+
+    if (!travelList[estimatePlaceDto.currentTravelId]) {
+      throw new NotFoundException('Travel Item not found');
+    }
+
+    const newValues =
+      estimatePlaceDto.event === 'like'
+        ? {
+            likeList: [
+              ...travelList[estimatePlaceDto.currentTravelId].likeList,
+              estimatePlaceDto.placeItem,
+            ],
+            dislikeList:
+              travelList[estimatePlaceDto.currentTravelId].dislikeList,
+          }
+        : {
+            dislikeList: [
+              ...travelList[estimatePlaceDto.currentTravelId].dislikeList,
+              estimatePlaceDto.placeItem,
+            ],
+            likeList: travelList[estimatePlaceDto.currentTravelId].likeList,
+          };
+
+    this.userModel.findByIdAndUpdate(
+      user._id,
+      {
+        travelList: {
+          ...user.travelList,
+          [estimatePlaceDto.currentTravelId]: {
+            ...travelList[estimatePlaceDto.currentTravelId],
+            ...newValues,
+          },
+        },
+      },
+      { new: true },
+    );
+
+    return estimatePlaceDto;
   }
 }
