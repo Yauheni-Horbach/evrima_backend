@@ -170,23 +170,41 @@ export class UserService {
       throw new NotFoundException('Travel Item not found');
     }
 
-    const newValues =
-      estimatePlaceDto.event === 'like'
-        ? {
-            likeList: [
-              ...travelList[estimatePlaceDto.currentTravelId].likeList,
-              estimatePlaceDto.placeItem,
-            ],
-            dislikeList:
-              travelList[estimatePlaceDto.currentTravelId].dislikeList,
-          }
-        : {
-            dislikeList: [
-              ...travelList[estimatePlaceDto.currentTravelId].dislikeList,
-              estimatePlaceDto.placeItem,
-            ],
-            likeList: travelList[estimatePlaceDto.currentTravelId].likeList,
-          };
+    let newValues = {};
+
+    if (estimatePlaceDto.event === 'like') {
+      const isAlreadyAdded = travelList[
+        estimatePlaceDto.currentTravelId
+      ].likeList.find((item) => {
+        return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
+      });
+
+      if (!isAlreadyAdded) {
+        newValues = {
+          likeList: [
+            ...travelList[estimatePlaceDto.currentTravelId].likeList,
+            estimatePlaceDto.placeItem,
+          ],
+          dislikeList: travelList[estimatePlaceDto.currentTravelId].dislikeList,
+        };
+      }
+    } else {
+      const isAlreadyAdded = travelList[
+        estimatePlaceDto.currentTravelId
+      ].dislikeList.find((item) => {
+        return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
+      });
+
+      if (!isAlreadyAdded) {
+        newValues = {
+          dislikeList: [
+            ...travelList[estimatePlaceDto.currentTravelId].dislikeList,
+            estimatePlaceDto.placeItem,
+          ],
+          likeList: travelList[estimatePlaceDto.currentTravelId].likeList,
+        };
+      }
+    }
 
     this.userModel.findByIdAndUpdate(
       user._id,
