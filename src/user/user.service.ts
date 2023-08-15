@@ -213,7 +213,7 @@ export class UserService {
       }
     }
 
-    this.userModel.findByIdAndUpdate(
+    const userAfterUpdating = await this.userModel.findByIdAndUpdate(
       user._id,
       {
         travelList: {
@@ -227,6 +227,6 @@ export class UserService {
       { new: true },
     );
 
-    return newValues;
+    return userAfterUpdating.travelList[estimatePlaceDto.currentTravelId];
   }
 }
