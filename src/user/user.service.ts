@@ -78,6 +78,8 @@ export class UserService {
           [travelId]: {
             ...createTravelDto,
             id: travelId,
+            dislikeList: [],
+            likeList: [],
           },
         },
       },
