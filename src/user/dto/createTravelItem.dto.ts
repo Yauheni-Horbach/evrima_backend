@@ -38,5 +38,5 @@ export class CreateTravelDtoResult {
   @IsString()
   readonly currentTravelId: string;
 
-  readonly travelItem: CreateTravelDto;
+  readonly travelItem: CreateTravelDto & { id: string };
 }

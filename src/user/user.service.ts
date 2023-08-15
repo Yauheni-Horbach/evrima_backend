@@ -75,7 +75,10 @@ export class UserService {
         currentTravelId: travelId,
         travelList: {
           ...user.travelList,
-          [travelId]: createTravelDto,
+          [travelId]: {
+            ...createTravelDto,
+            id: travelId,
+          },
         },
       },
       { new: true },
