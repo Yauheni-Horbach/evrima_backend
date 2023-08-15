@@ -179,8 +179,6 @@ export class UserService {
         return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
       });
 
-      console.log(isAlreadyAdded);
-
       if (!isAlreadyAdded) {
         newValues = {
           likeList: [
@@ -207,8 +205,6 @@ export class UserService {
         };
       }
     }
-
-    console.log(newValues);
 
     this.userModel.findByIdAndUpdate(
       user._id,
