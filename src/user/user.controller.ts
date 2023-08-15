@@ -10,7 +10,10 @@ import {
   UpdateTravelItemDto,
   UpdateTravelItemDtoResult,
 } from './dto/updateTravelItem.dto';
-import { EstimatePlaceDto } from './dto/estimatePlace.dto';
+import {
+  EstimatePlaceDto,
+  EstimatePlaceDtoResult,
+} from './dto/estimatePlace.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -61,7 +64,7 @@ export class UserController {
   async likeItem(
     @Param('id') id: string,
     @Body() estimatePlaceDto: EstimatePlaceDto,
-  ): Promise<EstimatePlaceDto> {
+  ): Promise<EstimatePlaceDtoResult> {
     return this.userService.estimatePlace(id, estimatePlaceDto);
   }
 }

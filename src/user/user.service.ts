@@ -11,10 +11,12 @@ import {
   UpdateTravelItemDto,
   UpdateTravelItemDtoResult,
 } from './dto/updateTravelItem.dto';
-import { EstimatePlaceDto } from './dto/estimatePlace.dto';
+import {
+  EstimatePlaceDto,
+  EstimatePlaceDtoResult,
+} from './dto/estimatePlace.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../common/schemas/user.schema';
-import { PlaceItem } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -162,7 +164,7 @@ export class UserService {
   async estimatePlace(
     @Param('id') id: string,
     @Body() estimatePlaceDto: EstimatePlaceDto,
-  ): Promise<EstimatePlaceDto> {
+  ): Promise<EstimatePlaceDtoResult> {
     const user = await this.userModel.findById(id);
 
     if (!user) {
@@ -175,7 +177,10 @@ export class UserService {
       throw new NotFoundException('Travel Item not found');
     }
 
-    let newValues = {};
+    let newValues = {
+      dislikeList: [],
+      likeList: [],
+    } as EstimatePlaceDtoResult;
 
     const likeList =
       travelList[estimatePlaceDto.currentTravelId].likeList || [];
@@ -222,6 +227,6 @@ export class UserService {
       { new: true },
     );
 
-    return estimatePlaceDto;
+    return newValues;
   }
 }

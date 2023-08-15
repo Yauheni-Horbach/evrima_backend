@@ -11,3 +11,11 @@ export class EstimatePlaceDto {
   @IsNotEmpty()
   event: 'like' | 'dislike';
 }
+
+export class EstimatePlaceDtoResult {
+  @IsNotEmpty()
+  dislikeList: PlaceItem[];
+
+  @IsNotEmpty()
+  likeList: PlaceItem[];
+}
