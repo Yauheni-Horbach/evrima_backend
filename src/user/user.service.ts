@@ -175,36 +175,33 @@ export class UserService {
 
     let newValues = {};
 
+    const likeList =
+      travelList[estimatePlaceDto.currentTravelId].likeList || [];
+    const dislikeList =
+      travelList[estimatePlaceDto.currentTravelId].dislikeList || [];
+
     if (estimatePlaceDto.event === 'like') {
-      const isAlreadyAdded = travelList[
-        estimatePlaceDto.currentTravelId
-      ].likeList.find((item) => {
+      const likeList =
+        travelList[estimatePlaceDto.currentTravelId].likeList || [];
+      const isAlreadyAdded = likeList.find((item) => {
         return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
       });
 
       if (!isAlreadyAdded) {
         newValues = {
-          likeList: [
-            ...travelList[estimatePlaceDto.currentTravelId].likeList,
-            estimatePlaceDto.placeItem,
-          ],
-          dislikeList: travelList[estimatePlaceDto.currentTravelId].dislikeList,
+          likeList: [...likeList, estimatePlaceDto.placeItem],
+          dislikeList,
         };
       }
     } else {
-      const isAlreadyAdded = travelList[
-        estimatePlaceDto.currentTravelId
-      ].dislikeList.find((item) => {
+      const isAlreadyAdded = dislikeList.find((item) => {
         return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
       });
 
       if (!isAlreadyAdded) {
         newValues = {
-          dislikeList: [
-            ...travelList[estimatePlaceDto.currentTravelId].dislikeList,
-            estimatePlaceDto.placeItem,
-          ],
-          likeList: travelList[estimatePlaceDto.currentTravelId].likeList,
+          dislikeList: [...dislikeList, estimatePlaceDto.placeItem],
+          likeList,
         };
       }
     }
