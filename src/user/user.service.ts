@@ -17,6 +17,8 @@ import {
 } from './dto/estimatePlace.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../common/schemas/user.schema';
+import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
+import { DeletePlaceFromTravelItemDto } from './dto/deletePlaceFromTravelItem.dto';
 
 @Injectable()
 export class UserService {
@@ -228,5 +230,83 @@ export class UserService {
     );
 
     return userAfterUpdating.travelList[estimatePlaceDto.currentTravelId];
+  }
+
+  async addIdToVisitedPlaces(
+    @Param('id') id: string,
+    @Body() addIdToVisitedPlaces: AddIdToVisitedPlacesDto,
+  ): Promise<AddIdToVisitedPlacesDto> {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { travelList } = user.toJSON();
+
+    if (!travelList[addIdToVisitedPlaces.currentTravelId]) {
+      throw new NotFoundException('Travel Item not found');
+    }
+
+    await this.userModel.findByIdAndUpdate(
+      user._id,
+      {
+        travelList: {
+          ...user.travelList,
+          [addIdToVisitedPlaces.currentTravelId]: {
+            ...travelList[addIdToVisitedPlaces.currentTravelId],
+            visitedPlaces: [
+              ...travelList[addIdToVisitedPlaces.currentTravelId].visitedPlaces,
+              addIdToVisitedPlaces.id,
+            ],
+          },
+        },
+      },
+      { new: true },
+    );
+
+    return addIdToVisitedPlaces;
+  }
+
+  async deletePlaceFromTravelItem(
+    @Param('id') id: string,
+    @Body() deletePlaceFromTravelItem: DeletePlaceFromTravelItemDto,
+  ): Promise<DeletePlaceFromTravelItemDto> {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { travelList } = user.toJSON();
+
+    if (!travelList[deletePlaceFromTravelItem.currentTravelId]) {
+      throw new NotFoundException('Travel Item not found');
+    }
+
+    await this.userModel.findByIdAndUpdate(
+      user._id,
+      {
+        travelList: {
+          ...user.travelList,
+          [deletePlaceFromTravelItem.currentTravelId]: {
+            ...travelList[deletePlaceFromTravelItem.currentTravelId],
+            visitedPlaces: travelList[
+              deletePlaceFromTravelItem.currentTravelId
+            ].visitedPlaces.filter(
+              (item) => item !== deletePlaceFromTravelItem.id,
+            ),
+            likeList: travelList[
+              deletePlaceFromTravelItem.currentTravelId
+            ].likeList.filter(
+              (item) => item.fsq_id !== deletePlaceFromTravelItem.id,
+            ),
+          },
+        },
+      },
+      { new: true },
+    );
+
+    return deletePlaceFromTravelItem;
   }
 }

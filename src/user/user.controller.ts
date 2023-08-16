@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Body, Put, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Body,
+  Put,
+  Query,
+  Delete,
+} from '@nestjs/common';
 
 import { UserDto } from '../common/dto/user.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
@@ -14,7 +22,9 @@ import {
   EstimatePlaceDto,
   EstimatePlaceDtoResult,
 } from './dto/estimatePlace.dto';
+import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
 import { UserService } from './user.service';
+import { DeletePlaceFromTravelItemDto } from './dto/deletePlaceFromTravelItem.dto';
 
 @Controller('user')
 export class UserController {
@@ -66,5 +76,24 @@ export class UserController {
     @Body() estimatePlaceDto: EstimatePlaceDto,
   ): Promise<EstimatePlaceDtoResult> {
     return this.userService.estimatePlace(id, estimatePlaceDto);
+  }
+
+  @Put('/addIdToVisitedPlaces/:id')
+  async addIdToVisitedPlaces(
+    @Param('id') id: string,
+    @Body() addIdToVisitedPlaces: AddIdToVisitedPlacesDto,
+  ): Promise<AddIdToVisitedPlacesDto> {
+    return this.userService.addIdToVisitedPlaces(id, addIdToVisitedPlaces);
+  }
+
+  @Delete('/deletePlaceFromTravelItem/:id')
+  async deletePlaceFromTravelItem(
+    @Param('id') id: string,
+    @Body() deletePlaceFromTravelItem: DeletePlaceFromTravelItemDto,
+  ): Promise<DeletePlaceFromTravelItemDto> {
+    return this.userService.deletePlaceFromTravelItem(
+      id,
+      deletePlaceFromTravelItem,
+    );
   }
 }
