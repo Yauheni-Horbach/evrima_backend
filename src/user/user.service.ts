@@ -18,7 +18,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../common/schemas/user.schema';
 import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
-import { DeletePlaceFromTravelItemDto } from './dto/deletePlaceFromTravelItem.dto';
+import { DeletePlaceFromTravelItemDtoResult } from './dto/deletePlaceFromTravelItem.dto';
 
 @Injectable()
 export class UserService {
@@ -270,36 +270,33 @@ export class UserService {
 
   async deletePlaceFromTravelItem(
     @Param('id') id: string,
-    @Body() deletePlaceFromTravelItem: DeletePlaceFromTravelItemDto,
-  ): Promise<DeletePlaceFromTravelItemDto> {
-    const user = await this.userModel.findById(id);
+    @Param('travelId') travelId: string,
+    @Param('placeId') placeId: string,
+  ): Promise<DeletePlaceFromTravelItemDtoResult> {
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
-    const { travelList } = user.toJSON();
+    const user = userModel.toJSON();
 
-    if (!travelList[deletePlaceFromTravelItem.currentTravelId]) {
+    if (!user.travelList[travelId]) {
       throw new NotFoundException('Travel Item not found');
     }
 
-    await this.userModel.findByIdAndUpdate(
+    const { travelList } = await this.userModel.findByIdAndUpdate(
       user._id,
       {
         travelList: {
           ...user.travelList,
-          [deletePlaceFromTravelItem.currentTravelId]: {
-            ...travelList[deletePlaceFromTravelItem.currentTravelId],
-            visitedPlaces: travelList[
-              deletePlaceFromTravelItem.currentTravelId
-            ].visitedPlaces.filter(
-              (item) => item !== deletePlaceFromTravelItem.id,
+          [travelId]: {
+            ...user.travelList[travelId],
+            visitedPlaces: user.travelList[travelId].visitedPlaces.filter(
+              (item) => item !== placeId,
             ),
-            likeList: travelList[
-              deletePlaceFromTravelItem.currentTravelId
-            ].likeList.filter(
-              (item) => item.fsq_id !== deletePlaceFromTravelItem.id,
+            likeList: user.travelList[travelId].likeList.filter(
+              (item) => item.fsq_id !== placeId,
             ),
           },
         },
@@ -307,6 +304,9 @@ export class UserService {
       { new: true },
     );
 
-    return deletePlaceFromTravelItem;
+    return {
+      currentTravelId: travelId,
+      travelItem: travelList[travelId],
+    };
   }
 }

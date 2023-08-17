@@ -24,7 +24,7 @@ import {
 } from './dto/estimatePlace.dto';
 import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
 import { UserService } from './user.service';
-import { DeletePlaceFromTravelItemDto } from './dto/deletePlaceFromTravelItem.dto';
+import { DeletePlaceFromTravelItemDtoResult } from './dto/deletePlaceFromTravelItem.dto';
 
 @Controller('user')
 export class UserController {
@@ -86,14 +86,12 @@ export class UserController {
     return this.userService.addIdToVisitedPlaces(id, addIdToVisitedPlaces);
   }
 
-  @Delete('/deletePlaceFromTravelItem/:id')
+  @Delete('/deletePlaceFromTravelItem/:id/:travelId/:placeId')
   async deletePlaceFromTravelItem(
     @Param('id') id: string,
-    @Body() deletePlaceFromTravelItem: DeletePlaceFromTravelItemDto,
-  ): Promise<DeletePlaceFromTravelItemDto> {
-    return this.userService.deletePlaceFromTravelItem(
-      id,
-      deletePlaceFromTravelItem,
-    );
+    @Param('travelId') travelId: string,
+    @Param('placeId') placeId: string,
+  ): Promise<DeletePlaceFromTravelItemDtoResult> {
+    return this.userService.deletePlaceFromTravelItem(id, travelId, placeId);
   }
 }

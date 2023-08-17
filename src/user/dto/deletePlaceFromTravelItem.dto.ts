@@ -1,9 +1,10 @@
 import { IsNotEmpty } from 'class-validator';
+import { TravelItem } from '../../types';
 
-export class DeletePlaceFromTravelItemDto {
+export class DeletePlaceFromTravelItemDtoResult {
   @IsNotEmpty()
-  currentTravelId: string;
+  readonly currentTravelId: string;
 
   @IsNotEmpty()
-  id: string;
+  readonly travelItem: TravelItem;
 }
