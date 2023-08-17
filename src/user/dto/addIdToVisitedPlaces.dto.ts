@@ -7,3 +7,11 @@ export class AddIdToVisitedPlacesDto {
   @IsNotEmpty()
   id: string;
 }
+
+export class AddIdToVisitedPlacesDtoResult {
+  @IsNotEmpty()
+  currentTravelId: string;
+
+  @IsNotEmpty()
+  visitedPlaces: string[];
+}

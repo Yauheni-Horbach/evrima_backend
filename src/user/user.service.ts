@@ -17,7 +17,10 @@ import {
 } from './dto/estimatePlace.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../common/schemas/user.schema';
-import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
+import {
+  AddIdToVisitedPlacesDto,
+  AddIdToVisitedPlacesDtoResult,
+} from './dto/addIdToVisitedPlaces.dto';
 import { DeletePlaceFromTravelItemDtoResult } from './dto/deletePlaceFromTravelItem.dto';
 
 @Injectable()
@@ -131,15 +134,15 @@ export class UserService {
     @Param('id') id: string,
     @Body() updateTravelItem: UpdateTravelItemDto,
   ): Promise<UpdateTravelItemDtoResult> {
-    const user = await this.userModel.findById(id);
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
-    const { travelList } = user.toJSON();
+    const user = userModel.toJSON();
 
-    if (!travelList[updateTravelItem.id]) {
+    if (!user.travelList[updateTravelItem.id]) {
       throw new NotFoundException('Travel Item not found');
     }
 
@@ -149,7 +152,7 @@ export class UserService {
         travelList: {
           ...user.travelList,
           [updateTravelItem.id]: {
-            ...travelList[updateTravelItem.id],
+            ...user.travelList[updateTravelItem.id],
             ...updateTravelItem,
           },
         },
@@ -159,7 +162,7 @@ export class UserService {
 
     return {
       currentTravelId: updateTravelItem.id,
-      travelItem: travelList[updateTravelItem.id],
+      travelItem: user.travelList[updateTravelItem.id],
     };
   }
 
@@ -167,15 +170,15 @@ export class UserService {
     @Param('id') id: string,
     @Body() estimatePlaceDto: EstimatePlaceDto,
   ): Promise<EstimatePlaceDtoResult> {
-    const user = await this.userModel.findById(id);
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
-    const { travelList } = user.toJSON();
+    const user = userModel.toJSON();
 
-    if (!travelList[estimatePlaceDto.currentTravelId]) {
+    if (!user.travelList[estimatePlaceDto.currentTravelId]) {
       throw new NotFoundException('Travel Item not found');
     }
 
@@ -185,13 +188,13 @@ export class UserService {
     } as EstimatePlaceDtoResult;
 
     const likeList =
-      travelList[estimatePlaceDto.currentTravelId].likeList || [];
+      user.travelList[estimatePlaceDto.currentTravelId].likeList || [];
     const dislikeList =
-      travelList[estimatePlaceDto.currentTravelId].dislikeList || [];
+      user.travelList[estimatePlaceDto.currentTravelId].dislikeList || [];
 
     if (estimatePlaceDto.event === 'like') {
       const likeList =
-        travelList[estimatePlaceDto.currentTravelId].likeList || [];
+        user.travelList[estimatePlaceDto.currentTravelId].likeList || [];
       const isAlreadyAdded = likeList.find((item) => {
         return item.fsq_id === estimatePlaceDto.placeItem.fsq_id;
       });
@@ -221,7 +224,7 @@ export class UserService {
         travelList: {
           ...user.travelList,
           [estimatePlaceDto.currentTravelId]: {
-            ...travelList[estimatePlaceDto.currentTravelId],
+            ...user.travelList[estimatePlaceDto.currentTravelId],
             ...newValues,
           },
         },
@@ -235,28 +238,29 @@ export class UserService {
   async addIdToVisitedPlaces(
     @Param('id') id: string,
     @Body() addIdToVisitedPlaces: AddIdToVisitedPlacesDto,
-  ): Promise<AddIdToVisitedPlacesDto> {
-    const user = await this.userModel.findById(id);
+  ): Promise<AddIdToVisitedPlacesDtoResult> {
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
-    const { travelList } = user.toJSON();
+    const user = userModel.toJSON();
 
-    if (!travelList[addIdToVisitedPlaces.currentTravelId]) {
+    if (!user.travelList[addIdToVisitedPlaces.currentTravelId]) {
       throw new NotFoundException('Travel Item not found');
     }
 
-    await this.userModel.findByIdAndUpdate(
+    const { travelList } = await this.userModel.findByIdAndUpdate(
       user._id,
       {
         travelList: {
           ...user.travelList,
           [addIdToVisitedPlaces.currentTravelId]: {
-            ...travelList[addIdToVisitedPlaces.currentTravelId],
+            ...user.travelList[addIdToVisitedPlaces.currentTravelId],
             visitedPlaces: [
-              ...travelList[addIdToVisitedPlaces.currentTravelId].visitedPlaces,
+              ...user.travelList[addIdToVisitedPlaces.currentTravelId]
+                .visitedPlaces,
               addIdToVisitedPlaces.id,
             ],
           },
@@ -265,7 +269,11 @@ export class UserService {
       { new: true },
     );
 
-    return addIdToVisitedPlaces;
+    return {
+      visitedPlaces:
+        travelList[addIdToVisitedPlaces.currentTravelId].visitedPlaces,
+      currentTravelId: addIdToVisitedPlaces.currentTravelId,
+    };
   }
 
   async deletePlaceFromTravelItem(

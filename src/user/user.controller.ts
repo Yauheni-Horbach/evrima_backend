@@ -22,7 +22,10 @@ import {
   EstimatePlaceDto,
   EstimatePlaceDtoResult,
 } from './dto/estimatePlace.dto';
-import { AddIdToVisitedPlacesDto } from './dto/addIdToVisitedPlaces.dto';
+import {
+  AddIdToVisitedPlacesDto,
+  AddIdToVisitedPlacesDtoResult,
+} from './dto/addIdToVisitedPlaces.dto';
 import { UserService } from './user.service';
 import { DeletePlaceFromTravelItemDtoResult } from './dto/deletePlaceFromTravelItem.dto';
 
@@ -82,7 +85,7 @@ export class UserController {
   async addIdToVisitedPlaces(
     @Param('id') id: string,
     @Body() addIdToVisitedPlaces: AddIdToVisitedPlacesDto,
-  ): Promise<AddIdToVisitedPlacesDto> {
+  ): Promise<AddIdToVisitedPlacesDtoResult> {
     return this.userService.addIdToVisitedPlaces(id, addIdToVisitedPlaces);
   }
 
