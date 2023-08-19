@@ -296,7 +296,7 @@ export class UserService {
     const likeList = user.travelList[travelId].likeList || [];
     const visitedPlaces = user.travelList[travelId].visitedPlaces || [];
 
-    const updatedUser = await this.userModel.findByIdAndUpdate(
+    await this.userModel.findByIdAndUpdate(
       userModel._id,
       {
         travelList: {
