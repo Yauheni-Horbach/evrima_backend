@@ -68,9 +68,9 @@ export class UserService {
     @Param('id') id: string,
     @Body() createTravelDto: CreateTravelDto,
   ): Promise<CreateTravelDtoResult> {
-    const user = await this.userModel.findById(id);
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
@@ -81,7 +81,7 @@ export class UserService {
       {
         currentTravelId: travelId,
         travelList: {
-          ...user.travelList,
+          ...userModel.travelList,
           [travelId]: {
             ...createTravelDto,
             id: travelId,
@@ -104,20 +104,20 @@ export class UserService {
     @Param('id') id: string,
     @Body() { travelId }: { travelId: string },
   ): Promise<CreateTravelDtoResult> {
-    const user = await this.userModel.findById(id);
+    const userModel = await this.userModel.findById(id);
 
-    if (!user) {
+    if (!userModel) {
       throw new NotFoundException('User not found');
     }
 
-    const { travelList } = user.toJSON();
+    const { travelList } = userModel.toJSON();
 
     if (!travelList[travelId]) {
       throw new NotFoundException('Travel Item not found');
     }
 
     this.userModel.findByIdAndUpdate(
-      user._id,
+      userModel._id,
       {
         currentTravelId: travelId as string,
       },
@@ -147,7 +147,7 @@ export class UserService {
     }
 
     this.userModel.findByIdAndUpdate(
-      user._id,
+      userModel._id,
       {
         travelList: {
           ...user.travelList,
@@ -219,7 +219,7 @@ export class UserService {
     }
 
     const userAfterUpdating = await this.userModel.findByIdAndUpdate(
-      user._id,
+      userModel._id,
       {
         travelList: {
           ...user.travelList,
@@ -252,7 +252,7 @@ export class UserService {
     }
 
     const { travelList } = await this.userModel.findByIdAndUpdate(
-      user._id,
+      userModel._id,
       {
         travelList: {
           ...user.travelList,
@@ -296,8 +296,8 @@ export class UserService {
     const likeList = user.travelList[travelId].likeList || [];
     const visitedPlaces = user.travelList[travelId].visitedPlaces || [];
 
-    const { travelList } = await this.userModel.findByIdAndUpdate(
-      user._id,
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userModel._id,
       {
         travelList: {
           ...user.travelList,
@@ -313,7 +313,7 @@ export class UserService {
 
     return {
       currentTravelId: travelId,
-      travelItem: travelList[travelId],
+      travelItem: updatedUser[travelId],
     };
   }
 }
