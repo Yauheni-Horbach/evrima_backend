@@ -293,6 +293,9 @@ export class UserService {
       throw new NotFoundException('Travel Item not found');
     }
 
+    const likeList = user.travelList[travelId].likeList || [];
+    const visitedPlaces = user.travelList[travelId].visitedPlaces || [];
+
     const { travelList } = await this.userModel.findByIdAndUpdate(
       user._id,
       {
@@ -300,12 +303,8 @@ export class UserService {
           ...user.travelList,
           [travelId]: {
             ...user.travelList[travelId],
-            visitedPlaces: user.travelList[travelId].visitedPlaces.filter(
-              (item) => item !== placeId,
-            ),
-            likeList: user.travelList[travelId].likeList.filter(
-              (item) => item.fsq_id !== placeId,
-            ),
+            visitedPlaces: visitedPlaces.filter((item) => item !== placeId),
+            likeList: likeList.filter((item) => item.fsq_id !== placeId),
           },
         },
       },
