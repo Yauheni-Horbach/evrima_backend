@@ -313,7 +313,7 @@ export class UserService {
 
     return {
       currentTravelId: travelId,
-      travelItem: updatedUser[travelId],
+      placeId,
     };
   }
 }

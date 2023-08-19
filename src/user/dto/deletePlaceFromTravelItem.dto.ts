@@ -6,5 +6,5 @@ export class DeletePlaceFromTravelItemDtoResult {
   readonly currentTravelId: string;
 
   @IsNotEmpty()
-  readonly travelItem: TravelItem;
+  readonly placeId: string;
 }
