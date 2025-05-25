@@ -1727,7 +1727,7 @@
     "@types/connect" "*"
     "@types/node" "*"
 
-"@types/bson@*":
+"@types/bson@*", "@types/bson@^4.2.4":
   version "4.2.4"
   resolved "https://registry.yarnpkg.com/@types/bson/-/bson-4.2.4.tgz#3bb08ab0de5dd07103fba355361814019ba2ae88"
   integrity sha512-SG23E3JDH6y8qF20a4G9txLuUl+TCV16gxsKyntmGiJez2V9VBJr1Y8WxTBBD6OgBVcvspQ7sxgdNMkXFVcaEA==
